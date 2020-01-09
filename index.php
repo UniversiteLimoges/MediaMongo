@@ -1,42 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MediaMongo</title>
 </head>
 <body>
+    <h1>Bienvenue dans votre bibliothèque</h1>
+    <p>Identifiez vous pour accéder à votre compte</p>
 
-<?php
-require_once "MongoPOO.php";
+    <form action="listing.php" method="post" class="listing">
+        <label>Utilisateur : 
+        <input type="text" name="user">
+        </label>
+        <label>Mot de passe : 
+        <input type="password" name="password">
+        </label>
+        <button>Connexion</button>
+    </form>
 
-$dsn = "mongodb://localhost:27017";
-$dbName = "BenoitCrespin";
-$collectionLivres = "livres";
-$collectionSpells = "Spells";
-
-$valuesToAdd = [
-    ['name' => 'Poke', 'level' => 1],
-    ['name' => 'Zap', 'level' => 1],
-    ['name' => 'Blast', 'level' => 2]
-];
-
-$valuesToUpdate = [
-    [ ['name' => 'Poke'], ['$set' => ['flavor' => 'Snick snick!']] ],
-    [ ['name' => 'Zap'], ['$set' => ['flavor' => 'Bzazt!'] ] ],
-    [ ['name' => 'Blast'], ['$set' => ['flavor' => 'FWOOM!']] ]
-];
-
-$mongo = new MongoPOO($dsn);
-
-// $mongo->deleteDatas($dbName, $collectionSpells);
-// $mongo->addDatas($dbName, $collectionSpells, $valuesToAdd);
-// $mongo->updateDatas($dbName, $collectionSpells, $valuesToUpdate);
-
-// $filter = ['level' => 1];
-// $mongo->displaySpells($dbName, $collectionSpells, $filter);
-// $mongo->displaySpells($dbName, $collectionSpells);
-
-$mongo->displayBooks($dbName, $collectionLivres);
-?>
 </body>
 </html>
