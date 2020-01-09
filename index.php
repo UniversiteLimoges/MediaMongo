@@ -12,7 +12,7 @@
 
     <form action="listing.php" method="post" class="listing">
         <label>Utilisateur : 
-        <input type="text" name="user">
+        <input type="text" name="username">
         </label>
         <label>Mot de passe : 
         <input type="password" name="password">

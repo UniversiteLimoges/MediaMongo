@@ -78,25 +78,40 @@ class MongoPOO {
 
     public function displayBooks($dbName, $collectionSpells, $filter = null) {
         $query = $this->initQuery($dbName, $collectionSpells, $filter);
-
+        echo "<table>
+                <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Auteur</th>
+                        <th>Type</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>";
         foreach ($query as $row) {
-            // Titre
-            // var_dump($row);
-
-            echo $row->fields->titre_avec_lien_vers_le_catalogue;
-            
-            // Auteur
-            if (isset($row->fields->auteur)) {
-                echo  " (".$row->fields->auteur .") -- ";
+            if(isset($row->fields->titre_avec_lien_vers_le_catalogue)) {
+                $title = $row->fields->titre_avec_lien_vers_le_catalogue;
             } else {
-                echo " -- ";
+                $title = "";
             }
-
-            // Type de document
+            if(isset($row->fields->auteur)) {
+                $author = $row->fields->auteur;
+            }
             if (isset($row->fields->type_de_document)) {
-                echo $row->fields->type_de_document ."<br>";
+                $type =  $row->fields->type_de_document;
             }
+            
+            echo "<tr>";
+            echo "<td>" . $title ."</td>";
+            echo "<td>" . $author ."</td>";
+            echo "<td>" . $type ."</td>";
+            echo "<td><button>Emprunter</button></td>";
+            echo "</tr>";
         }
+        
+        echo "</tbody>
+        </table>";
+    
     }
 
     public function displaySpells($dbName, $collectionSpells, $filter = null) {
