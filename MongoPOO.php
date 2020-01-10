@@ -2,8 +2,12 @@
 class MongoPOO {
     private $manager;
     private $query;
-    private $dsn;
     private $bulk;
+
+    public static $dsn = "mongodb://localhost:27017";
+    public static $dbName = "MediaMongo";
+    public static $collectionBooks = "livres";
+    public static $collectionUsers = "users";
 
     /**
      * Initialise le manager
@@ -44,6 +48,9 @@ class MongoPOO {
         return $this->getQuery();
     }
 
+    /**
+     * Ajout des données à une collection
+     */
     public function addDatas($dbName, $collection, $valuesToAdd) {
         $this->bulk = new MongoDB\Driver\BulkWrite;
 
@@ -54,6 +61,9 @@ class MongoPOO {
         $this->manager->executeBulkWrite($dbName . "." . $collection, $this->bulk);
     }
 
+    /**
+     * Met à jour des données d'une collection
+     */
     public function updateDatas($dbName, $collection, $valuesToUpdate) {
         $this->bulk = new MongoDB\Driver\BulkWrite;
 
@@ -64,15 +74,30 @@ class MongoPOO {
         $this->manager->executeBulkWrite($dbName . "." . $collection, $this->bulk);
     }
 
-    public function deleteDatas($dbName, $collection) {
+    /**
+     * Supprime des données d'une collection
+     */
+    public function deleteDatas($dbName, $collection, $datasToDelete) {
         $this->bulk = new MongoDB\Driver\BulkWrite;
         $this->manager = $this->getManager();
 
         // $bulk->delete(['name' => "Poke"], ['limit' => 1]);
-        $this->bulk->delete(['name' => "Poke"]);
-        $this->bulk->delete(['name' => "Zap"]);
-        $this->bulk->delete(['name' => "Blast"]);
+        // $this->bulk->delete(['name' => "Poke"]);
+        foreach($datasToDelete as $data) {
+            $this->bulk->delete($data);
+        }
+        
+        $this->manager->executeBulkWrite($dbName . "." . $collection, $this->bulk);
+    }
 
+    /**
+     * Efface une collection
+     */
+    public function deleteCollection($dbName, $collection) {
+        $this->bulk = new MongoDB\Driver\BulkWrite;
+        $this->manager = $this->getManager();
+
+        $this->bulk->delete([]);
         $this->manager->executeBulkWrite($dbName . "." . $collection, $this->bulk);
     }
 
@@ -96,9 +121,13 @@ class MongoPOO {
             }
             if(isset($row->fields->auteur)) {
                 $author = $row->fields->auteur;
+            } else {
+                $author = "";
             }
             if (isset($row->fields->type_de_document)) {
                 $type =  $row->fields->type_de_document;
+            } else {
+                $type =  "";
             }
             
             echo "<tr>";
@@ -126,5 +155,67 @@ class MongoPOO {
                 echo " (Flavor: " . $row->flavor . ")<br>";
             }
         }
+    }
+
+    public function displayUsers($dbName, $collectionSpells, $filter = null) {
+        $query = $this->initQuery($dbName, $collectionSpells, $filter);
+        echo "<table>
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Rôle</th>
+                        <th>Suppression</th>
+                    </tr>
+                </thead>
+                <tbody>";
+        foreach ($query as $key => $row) {
+            // echo "<pre>";
+            // var_dump($row);
+            // var_dump($key, $row->name);
+            if(isset($row->name)) {
+                $name = $row->name;
+            } 
+            
+            if(isset($row->role)) {
+                $role = $row->role;
+            }
+            
+            echo "<tr>";
+            echo "<td>" . $name ."</td>";
+            echo "<td>" . $role ."</td>";
+            echo "<td>
+            <form action='' method='post'>
+                <input type='submit' name='".$name."' value='Supprimer' />
+            </form>
+            </td>";
+            echo "</tr>";
+
+            $items[] = $name;
+        }
+        
+        // if($_SERVER['REQUEST_METHOD'] === "POST" and isset($_POST)){
+        //     foreach($items as $item) {
+                // if($item == array_keys($_POST)) { 
+                    // echo "ya";
+                    //     unset($Array[$k]); 
+                    // $this->deleteDatas(self::$dbName, self::$collectionUsers, [['name' => $name]] );
+                // } else {
+                //     var_dump($item);
+                    // var_dump(array_keys($_POST));
+                    
+                }
+                // var_dump($item);
+            }
+            // var_dump($_POST);
+
+            //     if($val == "GeeksForGeeks_3") { 
+            //         unset($Array[$k]); 
+            //     } 
+            // $this->deleteDatas(self::$dbName, self::$collectionUsers, [['name' => $name]] );
+        }
+        // var_dump($items);
+
+        
+        
     }
 }

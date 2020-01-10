@@ -1,35 +1,24 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="main.css">
-    <title>MediaMongo</title>
-</head>
-<?php
+<?php 
+require_once "_inc/header.php" ;
 require_once "MongoPOO.php";
-// var_dump($_POST);
+$mongo = new MongoPOO(MongoPOO::$dsn);
 
-$dsn = "mongodb://localhost:27017";
-$dbName = "BenoitCrespin";
-$collectionLivres = "livres";
-$collectionSpells = "Spells";
+// $collectionSpells = "spells";
 
-$valuesToAdd = [
-    ['name' => 'Poke', 'level' => 1],
-    ['name' => 'Zap', 'level' => 1],
-    ['name' => 'Blast', 'level' => 2]
-];
+// $valuesToAdd = [
+//     ['name' => 'Poke', 'level' => 1],
+//     ['name' => 'Zap', 'level' => 1],
+//     ['name' => 'Blast', 'level' => 2]
+// ];
 
-$valuesToUpdate = [
-    [ ['name' => 'Poke'], ['$set' => ['flavor' => 'Snick snick!']] ],
-    [ ['name' => 'Zap'], ['$set' => ['flavor' => 'Bzazt!']] ],
-    [ ['name' => 'Blast'], ['$set' => ['flavor' => 'FWOOM!']] ]
-];
+// $valuesToUpdate = [
+//     [ ['name' => 'Poke'], ['$set' => ['flavor' => 'Snick snick!']] ],
+//     [ ['name' => 'Zap'], ['$set' => ['flavor' => 'Bzazt!']] ],
+//     [ ['name' => 'Blast'], ['$set' => ['flavor' => 'FWOOM!']] ]
+// ];
 
-$mongo = new MongoPOO($dsn);
 
+// $mongo->deleteCollection($dbName, $collectionBooks);
 // $mongo->deleteDatas($dbName, $collectionSpells);
 // $mongo->addDatas($dbName, $collectionSpells, $valuesToAdd);
 // $mongo->updateDatas($dbName, $collectionSpells, $valuesToUpdate);
@@ -37,11 +26,9 @@ $mongo = new MongoPOO($dsn);
 // $filter = ['level' => 1];
 // $mongo->displaySpells($dbName, $collectionSpells, $filter);
 // $mongo->displaySpells($dbName, $collectionSpells);
-
-// $mongo->displayBooks($dbName, $collectionLivres);
 ?>
+
 <h1><?= "Bienvenue " . $_POST["username"] ." !" ?></h1>
 <h2>Bibliothèque</h2>
-<?php $mongo->displayBooks($dbName, $collectionLivres); ?>
-
+<?php $mongo->displayBooks(MongoPOO::$dbName, MongoPOO::$collectionBooks); ?>
 <h2>Vos emprunts</h2>

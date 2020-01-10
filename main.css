@@ -20,18 +20,19 @@ td {
 }
 
 tr {
+    height: 40px;
 }
 
 tr:hover {
-    background-color: #4287f5; 
+    background-color: #2d5faf; 
     color: white; 
 }
 
 th,td{ 
-    width: 25%;
-
+    /* width: 25%; */
 }
 
 button {
-    ;
+    display: block;
+    margin: auto;
 }
