@@ -1,4 +1,4 @@
-<?php 
+<?php
     if(!isset($title)) $title = "";
 ?>
 
@@ -12,10 +12,5 @@
     <title>MediaMongo <?= $title ?></title>
 </head>
 <body>
-<nav>
-    <ul>
-        <li><a href="index.php">Home</a></li>
-        <li><a href="createUser.php">Ajout d'un utilisateur</a></li>
-        <li><a href="listUsers.php">Listing des utilisateurs</a></li>
-    </ul>
-</nav>
+
+<?php require_once("generalMenu.php"); ?>

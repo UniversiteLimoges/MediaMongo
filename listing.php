@@ -1,34 +1,42 @@
 <?php 
-require_once "_inc/header.php" ;
-require_once "MongoPOO.php";
-$mongo = new MongoPOO(MongoPOO::$dsn);
+session_start();
 
-// $collectionSpells = "spells";
+require_once "Books.php";
+$books = new Books(MongoPOO::$dsn);
+// var_dump($_POST['username']);
 
-// $valuesToAdd = [
-//     ['name' => 'Poke', 'level' => 1],
-//     ['name' => 'Zap', 'level' => 1],
-//     ['name' => 'Blast', 'level' => 2]
-// ];
+if(isset($_POST["username"])) {
+    $formUsername = $_POST["username"];
+    $_SESSION['formUsername'] = $formUsername;
 
-// $valuesToUpdate = [
-//     [ ['name' => 'Poke'], ['$set' => ['flavor' => 'Snick snick!']] ],
-//     [ ['name' => 'Zap'], ['$set' => ['flavor' => 'Bzazt!']] ],
-//     [ ['name' => 'Blast'], ['$set' => ['flavor' => 'FWOOM!']] ]
-// ];
+    if(isset($_POST["password"])) {
+        $formPassword = $_POST["password"];
+    }
 
+    $query = $books->initQuery(MongoPOO::$dbName, MongoPOO::$collectionUsers);
+    foreach($query as $row) {
+        if($formUsername === $row->name && $formPassword === $row->password) {
+            $connect = true;
 
-// $mongo->deleteCollection($dbName, $collectionBooks);
-// $mongo->deleteDatas($dbName, $collectionSpells);
-// $mongo->addDatas($dbName, $collectionSpells, $valuesToAdd);
-// $mongo->updateDatas($dbName, $collectionSpells, $valuesToUpdate);
+            $_SESSION['connect'] = $connect;
+            $_SESSION['formUsername'] = $formUsername;
+        } 
+    }
+} else {
+    $formUsername = "";
+}
+require_once "_inc/header.php";
 
-// $filter = ['level' => 1];
-// $mongo->displaySpells($dbName, $collectionSpells, $filter);
-// $mongo->displaySpells($dbName, $collectionSpells);
+// Redirection if not connected
+if(!$_SESSION['connect']) {
+    header('Location: index.php');
+    exit;
+}
 ?>
 
-<h1><?= "Bienvenue " . $_POST["username"] ." !" ?></h1>
+<h1><?= "Bienvenue " . $formUsername ." !" ?></h1>
 <h2>Bibliothèque</h2>
-<?php $mongo->displayBooks(MongoPOO::$dbName, MongoPOO::$collectionBooks); ?>
+<?php $books->displayBooks(MongoPOO::$dbName, MongoPOO::$collectionBooks); ?>
 <h2>Vos emprunts</h2>
+<?php $books->displayBooksTaken(MongoPOO::$dbName, MongoPOO::$collectionBooks); ?>
+

@@ -1,9 +1,12 @@
 <?php 
+session_start();
+
 $title = "User Creation";
 require_once "_inc/header.php";
-require_once "MongoPOO.php";
 
-$mongo = new MongoPOO(MongoPOO::$dsn);
+require_once "Users.php";
+
+$users = new Users(MongoPOO::$dsn);
 
 $usersToAdd = [
     ['name' => 'Administrator', 'password' => 'admin123', 'role' => 'admin'],
@@ -12,7 +15,7 @@ $usersToAdd = [
     ['name' => 'Louis', 'password' => 'louis123', 'role' => 'user']
 ];
 
-// $mongo->deleteCollection(MongoPOO::$dbName, MongoPOO::$collectionUsers)
-$mongo->addDatas(MongoPOO::$dbName, MongoPOO::$collectionUsers, $usersToAdd);
-
+$users->addDatas(MongoPOO::$dbName, MongoPOO::$collectionUsers, $usersToAdd);
+header('Location: usersList.php');
+exit;
 ?>
