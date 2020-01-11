@@ -1,41 +1,77 @@
 <?php 
 session_start();
+require_once "Books.php";
+require_once "Users.php";
 
-require_once "_inc/header.php"; 
+$books = new Books(MongoPOO::$dsn);
+$user = new Users(MongoPOO::$dsn);
 
-// var_dump($_GET);
-// echo "<pre>";
-// var_dump($_SERVER);
+// Form verification
+if(isset($_POST["username"]) and $_POST["username"]) {
+    $formUsername = $_POST["username"];
+    $_SESSION['username'] = $formUsername;
 
-// if($_GET['disconnect']) {
-//     session_destroy();
-// }
-if(isset($_SESSION['formUsername'])) {
-    $formUsername = $_SESSION['formUsername'];
+    if(isset($_POST["password"])) {
+        $formPassword = $_POST["password"];
+    }
+
+    // Query and validation
+    $query = $books->initQuery(MongoPOO::$dbName, MongoPOO::$collectionUsers);
+    foreach($query as $row) {
+        if($formUsername === $row->name && $formPassword === $row->password) {
+            $connect = true;
+            $_SESSION['connect'] = $connect;
+        } 
+    }
 } else {
-    $formUsername = "";
+
 }
 
-if(isset($_SESSION['connect']) && $_SESSION['connect']) {
-    header('Location: listing.php');
-    exit;
-} 
+require_once "_inc/header.php";
 
-$title = "Website";
+// Redirection if not connected
+if(!$_SESSION['connect']) {
+    header('Location: login.php');
+    exit;
+}
 ?>
 
-    <h1>Bienvenue dans votre bibliothèque</h1>
-    <p>Identifiez vous pour accéder à votre compte</p>
+<h1><?= "Bienvenue " . $_SESSION['username'] ." !" ?></h1>
+<h2>Bibliothèque</h2>
+<?php $books->displayBooks(MongoPOO::$dbName, MongoPOO::$collectionBooks); ?>
 
-    <form action="listing.php" method="post" class="listing">
-        <label>Utilisateur : 
-        <input type="text" name="username" placeholder="Entrez votre prénom" value="<?= $formUsername ?>">
-        </label>
-        <label>Mot de passe : 
-        <input type="password" name="password" placeholder="Entrez votre mot de passe">
-        </label>
-        <button>Connexion</button>
-    </form>
+<h2>Vos emprunts</h2>
+<?php
 
-</body>
-</html>
+$userName = ['name' => $user->getUser()];
+if(isset($_POST) and !empty($_POST) and $_POST[array_keys($_POST)[0]] === "Emprunter") {
+    $bookTakenID = array_keys($_POST)[0];
+    $userName = ['name' => $user->getUser()];
+
+    $userCurrentID = ['_id' => $user->getMongoDbObjectId($user, MongoPOO::$dbName, MongoPOO::$collectionUsers, $userName)];
+    
+    $nbReservations = Users::userNbReservations();
+    // $books = [];
+
+    // $bookSelectedToAdd = [
+    //     '$set' => ['
+    //         books' => 
+    //             // [['book'. $nbReservations => $bookTakenID], 'bite' => 'cjoe']
+    //             [['book'=> $bookTakenID], ['book2' => 'cjoe']]
+    //     ]
+    // ];
+
+    $bookSelectedToAdd = [
+        '$set' => ['books' => ['book'=> $bookTakenID]]
+    ];
+
+    $books->addBookToUser(MongoPOO::$dbName, MongoPOO::$collectionUsers, $userCurrentID, $bookSelectedToAdd);
+}
+
+$books->displayBooksTaken(MongoPOO::$dbName, MongoPOO::$collectionBooks, $userName); 
+
+// foreach($query as $row) {
+//     echo $row->name;
+//     echo $row->password;
+// }
+?>

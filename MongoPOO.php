@@ -26,13 +26,26 @@ class MongoPOO {
     }
 
     /**
-     * Récupère la requête
+     * Get the query
      * @return $query
      */
     private function getQuery() {
         return $this->query;
     }
 
+    /**
+     * Get the id of the object
+     */
+    public function getMongoDbObjectId($instance, $dbName, $collection, $filter = null) {
+        $this->query = $instance->initQuery($dbName, $collection, $filter);
+
+        foreach($this->query as $row) {
+            $id = $row->_id;
+        }
+
+        return $id;
+    }
+    
     /**
      * Requête avec ou sans filtre
      * @return $query
@@ -52,10 +65,10 @@ class MongoPOO {
     /**
      * Ajout des données à une collection
      */
-    public function addDatas($dbName, $collection, $valuesToAdd) {
+    public function addDatas($dbName, $collection, $datasToAdd) {
         $this->bulk = new MongoDB\Driver\BulkWrite;
 
-        foreach($valuesToAdd as $row) {
+        foreach($datasToAdd as $row) {
             $this->bulk->insert($row);
         }
 
@@ -65,12 +78,9 @@ class MongoPOO {
     /**
      * Met à jour des données d'une collection
      */
-    public function updateDatas($dbName, $collection, $valuesToUpdate) {
+    public function updateDatas($dbName, $collection, $filter, $datasToUpdate) {
         $this->bulk = new MongoDB\Driver\BulkWrite;
-
-        foreach($valuesToUpdate as $row) {
-            $this->bulk->update($row[0], $row[1]);
-        }
+        $this->bulk->update($filter, $datasToUpdate);
 
         $this->manager->executeBulkWrite($dbName . "." . $collection, $this->bulk);
     }
@@ -82,8 +92,7 @@ class MongoPOO {
         $this->bulk = new MongoDB\Driver\BulkWrite;
         $this->manager = $this->getManager();
 
-        // $bulk->delete(['name' => "Poke"], ['limit' => 1]);
-        // $this->bulk->delete(['name' => "Poke"]);
+        // $this->bulk->delete(['name' => "Poke"], ['limit' => 1]);
         foreach($datasToDelete as $data) {
             $this->bulk->delete($data);
         }
@@ -101,4 +110,18 @@ class MongoPOO {
         $this->bulk->delete([]);
         $this->manager->executeBulkWrite($dbName . "." . $collection, $this->bulk);
     }
+
+    // public function displaySpells($dbName, $collectionSpells, $filter = null) {
+    //     $query = $this->initQuery($dbName, $collectionSpells, $filter);
+
+    //     echo'Level 1 spell list:<br/>';
+    //     foreach ($query as $row) {
+    //         echo 'Spell name: ' . $row->name . "<br>";
+    //         echo 'Spell level: ' . $row->level . "<br>";
+
+    //         if(isset($row->flavor)) {
+    //             echo " (Flavor: " . $row->flavor . ")<br>";
+    //         }
+    //     }
+    // }
 }

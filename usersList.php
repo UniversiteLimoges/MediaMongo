@@ -5,6 +5,7 @@ $title = "User listing";
 require_once "_inc/header.php";
 require_once "Users.php";
 
+echo "<h1>Page des utilisateurs</h1>";
 echo "<a href='usersAdd.php'>Ajout des utilisateurs</a>";
 echo "<a href='usersDelete.php'>Suppression des utilisateurs</a>";
 
