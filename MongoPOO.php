@@ -62,6 +62,12 @@ class MongoPOO {
         return $this->getQuery();
     }
 
+    public function initCommand($collection, $filter = null) {
+        $command = $this->getManager()->executeCommand($collection, $filter);
+
+        return $command;
+    }
+
     /**
      * Ajout des données à une collection
      */

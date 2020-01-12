@@ -90,18 +90,19 @@ class Books extends MongoPOO {
             }
             
             foreach($users as $user) {
-                foreach($user->books as $u) {
+                if(isset($user->books)) {
+                    foreach($user->books as $u) {
 
-                    if($row->_id == $u) {
+                        if($row->_id == $u) {
 
-                        echo "<tr>";
-                        echo "<td>" . $title ."</td>";
-                        echo "<td>" . $author ."</td>";
-                        echo "<td>" . $type ."</td>";
-                        echo "<td><button>Rendre</button></td>";
-                        echo "</tr>";
-                    } 
-
+                            echo "<tr>";
+                            echo "<td>" . $title ."</td>";
+                            echo "<td>" . $author ."</td>";
+                            echo "<td>" . $type ."</td>";
+                            echo "<td><button>Rendre</button></td>";
+                            echo "</tr>";
+                        } 
+                    }
                 }
                 
             }
